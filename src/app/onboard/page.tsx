@@ -20,7 +20,7 @@ import { RootState } from "@/lib/store";
 
 interface VideoOnboardProps {}
 
-const MAX_CHUNK_SIZE = 2000;
+const MAX_CHUNK_SIZE = 300;
 
 const VideoOnboard: React.FunctionComponent<VideoOnboardProps> = () => {
   const sessionId = useSelector(
@@ -32,9 +32,7 @@ const VideoOnboard: React.FunctionComponent<VideoOnboardProps> = () => {
   const [error, setError] = useState<string | null>(null);
   const [upsertMessage, setUpsertMessage] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [extractedItems, setExtractedItems] = useState<
-    (ClothingItem | AccessoryItem)[]
-  >([]);
+
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,7 +50,7 @@ const VideoOnboard: React.FunctionComponent<VideoOnboardProps> = () => {
       }
 
       // Update extractedItems state with all parsed items
-      setExtractedItems(allParsedItems);
+    
       console.log(allParsedItems);
       // Upsert allParsedItems to Pinecone (Implement this part based on your Pinecone setup)
       const pineconeResponse = await fetch("/api/pinecone", {
@@ -61,7 +59,7 @@ const VideoOnboard: React.FunctionComponent<VideoOnboardProps> = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           method: "upsert",
-          data: wardrobeData,
+          data: allParsedItems,
           sessionId: sessionId,
         }),
       });
@@ -106,7 +104,6 @@ const VideoOnboard: React.FunctionComponent<VideoOnboardProps> = () => {
       if (response.ok) {
         const data = await response.json();
         setUpsertMessage(data.message || "All items deleted successfully!");
-        setExtractedItems([]); // Clear extractedItems after deletion
       } else {
         throw new Error(`Error deleting from Pinecone: ${response.statusText}`);
       }
