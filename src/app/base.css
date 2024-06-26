@@ -1,0 +1,19 @@
+/* base.css */
+body {
+  margin: 0; /* Remove default top/bottom margins */
+  padding: 0; /* Remove default top/bottom padding */
+  background: #d4d3d8;
+}
+
+.chat-container {
+  /* or whatever class you are using for your container */
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  height: 100%; /* Take up full height of the container */
+}
+
+.chat-messages {
+  /* or whatever class you are using for messages section */
+  flex: 1; /* Messages take up available space */
+  overflow-y: auto; /* Add scrollbar if messages overflow */
+}
