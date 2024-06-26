@@ -1,29 +1,31 @@
-// next.config.mjs
-const path = require("path");
 
-/** @type {import('next').NextConfig} */
+import path from 'path'; // Use ESM import
+
 const nextConfig = {
   typescript: {
-    ignoreBuildErrors: true,
-  },
-  reactStrictMode: true, // Or whatever your setting is
-  swcMinify: true, // Or whatever your setting is
+        ignoreBuildErrors: true,
+      },
+  reactStrictMode: true,
+  swcMinify: true,
   experimental: {
-    appDir: true, // You'll need this if you're using the new App Router (Next.js 13)
+    appDir: true,
     serverComponentsExternalPackages: ["@pinecone-database/pinecone"],
   },
 
   webpack: (config, { isServer }) => {
-    // Fixes npm packages that depend on `fs` module
-    if (!isServer) {
-      config.resolve.fallback = {
+    config.resolve = {
+      ...config.resolve, // Keep existing configuration
+      alias: {
+        ...config.resolve.alias, // Keep existing aliases
+        "path": require.resolve("path-browserify"),
+      },
+      fallback: {
+        ...config.resolve.fallback, // Keep existing fallback
         fs: false,
         net: false,
         tls: false,
-        path: require.resolve("path-browserify"),
-      };
-    }
-
+      },
+    };
     // Resolve `.mjs` files (for both client and server)
     config.module.rules.push({
       test: /\.mjs$/,
@@ -34,15 +36,14 @@ const nextConfig = {
     return config;
   },
 
-  // Include your environment variables directly in next.config.mjs
   env: {
+    // Include your environment variables directly in next.config.mjs
     NEXT_PUBLIC_OPENAI_API_KEY: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
     NEXT_PUBLIC_ANTHROPIC_CLAUDE_OPUS_API_KEY:
       process.env.NEXT_PUBLIC_ANTHROPIC_CLAUDE_OPUS_API_KEY,
     NEXT_PUBLIC_GEMINI_API_KEY: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
     NEXT_PUBLIC_PINECONE_API_KEY: process.env.NEXT_PUBLIC_PINECONE_API_KEY,
-    NEXT_PUBLIC_PINECONE_INDEX_NAME:
-      process.env.NEXT_PUBLIC_PINECONE_INDEX_NAME,
+    NEXT_PUBLIC_PINECONE_INDEX_NAME: process.env.NEXT_PUBLIC_PINECONE_INDEX_NAME,
   },
 };
 
