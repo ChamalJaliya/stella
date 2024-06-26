@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       }
 
       // Generate embeddings and upsert to Pinecone
-      const batchSize = 500; // Choose an appropriate batch size
+      const batchSize = 100; // Choose an appropriate batch size
       for (let i = 0; i < parsedItems.length; i += batchSize) {
         const batch = parsedItems.slice(i, i + batchSize);
         const vectors = await Promise.all(
